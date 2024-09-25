@@ -7,15 +7,6 @@ import redCard from '../assets/red.webp';
 import whiteCard from '../assets/white.webp';
 
 const Player = ({ name, score, role, position, isPositionCorrect }) => {
-  const [{ isDragging }, drag] = useDrag({
-    type: 'player',
-    item: { position }, // Oyuncunun pozisyonunu sürüklerken aktar
-    collect: (monitor) => ({
-      isDragging: monitor.isDragging(),
-    }),
-  });
-
-  // Puan aralığına göre arka plan kartını belirleme
   const getBackgroundImage = (score) => {
     if (score >= 90) return blueCard;
     if (score >= 82) return whiteCard;
@@ -23,7 +14,28 @@ const Player = ({ name, score, role, position, isPositionCorrect }) => {
     return yellowCard;
   };
 
-  // Mevki uyumsuzluğu varsa kırmızı outline ekleyelim
+  const getRoleLabel = (role) => {
+    if (role.isGoalkeeper) return 'GK';  // Kaleci
+    if (role.role === 'hucum') return 'SF'; // Hücum
+    if (role.role === 'defans') return 'DF'; // Defans
+    return ''; // Diğer roller için boş bırak
+  };
+
+  const backgroundImage = getBackgroundImage(score);
+  const roleLabel = getRoleLabel(role);
+
+  const [{ isDragging }, drag, dragPreview] = useDrag({
+    type: 'player',
+    item: { position },
+    collect: (monitor) => ({
+      isDragging: monitor.isDragging(),
+    }),
+  });
+
+  // Drag preview'i kapat
+  dragPreview(null);
+
+  // Doğru pozisyonda olup olmadığını kontrol et ve kırmızı çerçeve ekle
   const borderColor = isPositionCorrect ? 'border-transparent' : 'border-red-500';
 
   const playerVariants = {
@@ -31,41 +43,58 @@ const Player = ({ name, score, role, position, isPositionCorrect }) => {
     visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
   };
 
-  const backgroundImage = getBackgroundImage(score);
-
   return (
     <motion.div
       ref={drag}
-      className={`flex flex-col items-center justify-center p-2 transition transform hover:scale-105 border-4 ${borderColor}`}
+      className={`flex flex-col items-center justify-center mb-2 p-4 transition transform hover:scale-110 border-4 ${borderColor}`}
       style={{
         opacity: isDragging ? 0.5 : 1,
         backgroundImage: `url(${backgroundImage})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
-        width: '80px',
-        height: '120px',
+        width: '180px', // Kart genişliği
+        height: '280px', // Kart yüksekliği
       }}
       variants={playerVariants}
     >
-      <svg
-        width="80"
-        height="120"
-        viewBox="0 0 80 120"
-        xmlns="http://www.w3.org/2000/svg"
-      >
+      <div style={{ position: 'relative', width: '100%', height: '100%' }}>
         {/* Oyuncu Bilgileri */}
-        <text x="40" y="60" textAnchor="middle" fontSize="12" fill="#ffffff" fontWeight="bold" fontFamily="Impact">
-          {name}
-        </text>
-        <text x="40" y="80" textAnchor="middle" fontSize="10" fill="#ffffff" fontFamily="Impact">
-          Puan: {score}
-        </text>
-        {role.role && (
-          <text x="40" y="100" textAnchor="middle" fontSize="10" fill="#ffffff" fontFamily="Impact">
-            {role.role}
-          </text>
-        )}
-      </svg>
+        <div style={{ position: 'absolute', top: '50%', transform: 'translateY(-50%)', width: '100%' }}>
+          <div
+            style={{
+              textAlign: 'center',
+              fontSize: '20px',
+              color: '#ffffff',
+              fontWeight: 'bold',
+              fontFamily: 'Impact',
+            }}
+          >
+            {name}
+          </div>
+          <div
+            style={{
+              textAlign: 'center',
+              fontSize: '18px',
+              color: '#ffffff',
+              fontFamily: 'Impact',
+            }}
+          >
+            Puan: {score}
+          </div>
+          {roleLabel && (
+            <div
+              style={{
+                textAlign: 'center',
+                fontSize: '18px',
+                color: '#ffffff',
+                fontFamily: 'Impact',
+              }}
+            >
+              {roleLabel}
+            </div>
+          )}
+        </div>
+      </div>
     </motion.div>
   );
 };

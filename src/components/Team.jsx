@@ -1,23 +1,24 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Player from './Player';
 import { useDrop } from 'react-dnd';
 import { motion } from 'framer-motion';
 
 const Team = ({ teamName, initialPlayers }) => {
-  // 1-3-3 pozisyonları matriksi (ters): [ [hucum], [defans], [kaleci] ]
   const [positions, setPositions] = useState([
     initialPlayers.slice(4, 7),  // 3 hücum
     initialPlayers.slice(1, 4),  // 3 defans
     [initialPlayers[0]]          // 1 kaleci
   ]);
 
-  const isPositionCorrect = (player, rowIndex) => {
-    if (rowIndex === 0 && player.role !== 'hucum') return false;
-    if (rowIndex === 1 && player.role !== 'defans') return false;
-    if (rowIndex === 2 && !player.isGoalkeeper) return false;
-    return true;
-  };
+  useEffect(() => {
+    setPositions([
+      initialPlayers.slice(4, 7),  // 3 hücum
+      initialPlayers.slice(1, 4),  // 3 defans
+      [initialPlayers[0]]          // 1 kaleci
+    ]);
+  }, [initialPlayers]);
 
+  // Oyuncu pozisyonunu değiştirme
   const movePlayer = (fromPosition, toPosition) => {
     const newPositions = positions.map((row) => [...row]);
     const playerToMove = newPositions[fromPosition.row][fromPosition.col];
@@ -26,32 +27,34 @@ const Team = ({ teamName, initialPlayers }) => {
     setPositions(newPositions);
   };
 
+  // Drop alanı yaratma
   const createDropZone = (toPosition) => {
     const [, drop] = useDrop({
       accept: 'player',
       drop: (draggedPlayer) => movePlayer(draggedPlayer.position, toPosition),
+      collect: (monitor) => ({
+        isOver: monitor.isOver(),
+      }),
     });
     return drop;
   };
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.3,
-      },
-    },
+  // Doğru pozisyon kontrolü
+  const isPositionCorrect = (player, rowIndex) => {
+    if (rowIndex === 0 && player.role !== 'hucum') return false;
+    if (rowIndex === 1 && player.role !== 'defans') return false;
+    if (rowIndex === 2 && !player.isGoalkeeper) return false;
+    return true;
   };
 
   return (
-    <motion.div
-      className="relative w-full h-full p-2 flex flex-col justify-center"
-      initial="hidden"
-      animate="visible"
-      variants={containerVariants}
-    >
+    <motion.div className="relative w-full h-full p-2 flex flex-col justify-center">
       <h2 className="text-2xl font-bold mt-4 mb-2 text-center">{teamName}</h2>
+
+      {/* Beyaz çizgi */}
+      <div className="relative">
+        <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-1 h-full bg-white"></div>
+      </div>
 
       {/* Hücum oyuncuları */}
       <div className="flex justify-center gap-2 pt-2">
