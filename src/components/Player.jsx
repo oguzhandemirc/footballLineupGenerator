@@ -46,24 +46,22 @@ const Player = ({ name, score, role, position, isPositionCorrect }) => {
   return (
     <motion.div
       ref={drag}
-      className={`flex flex-col items-center justify-center mb-2 p-4 transition transform hover:scale-110 border-4 ${borderColor}`}
+      className={`flex flex-col bg-opacity-0 items-center justify-center mb-2 p-4 transition transform hover:scale-110 border-4 w-[90px] sm:w-[180px] ${borderColor}`}
       style={{
         opacity: isDragging ? 0.5 : 1,
         backgroundImage: `url(${backgroundImage})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
-        width: '180px', // Kart genişliği
-        height: '280px', // Kart yüksekliği
+        height: '190px', // Kart yüksekliği
       }}
       variants={playerVariants}
     >
       <div style={{ position: 'relative', width: '100%', height: '100%' }}>
         {/* Oyuncu Bilgileri */}
-        <div style={{ position: 'absolute', top: '50%', transform: 'translateY(-50%)', width: '100%' }}>
+        <div className='text-sm sm:text-xl' style={{ position: 'absolute', top: '50%', transform: 'translateY(-50%)', width: '100%' }}>
           <div
             style={{
               textAlign: 'center',
-              fontSize: '20px',
               color: '#ffffff',
               fontWeight: 'bold',
               fontFamily: 'Impact',
@@ -72,9 +70,9 @@ const Player = ({ name, score, role, position, isPositionCorrect }) => {
             {name}
           </div>
           <div
+          className='text-sm sm:text-xl'
             style={{
               textAlign: 'center',
-              fontSize: '18px',
               color: '#ffffff',
               fontFamily: 'Impact',
             }}
@@ -83,9 +81,9 @@ const Player = ({ name, score, role, position, isPositionCorrect }) => {
           </div>
           {roleLabel && (
             <div
+            className='text-sm sm:text-xl'
               style={{
                 textAlign: 'center',
-                fontSize: '18px',
                 color: '#ffffff',
                 fontFamily: 'Impact',
               }}

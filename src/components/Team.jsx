@@ -48,7 +48,7 @@ const Team = ({ teamName, initialPlayers }) => {
   };
 
   return (
-    <motion.div className="relative w-full h-full p-2 flex flex-col justify-center">
+    <motion.div className="relative w-full h-full p-2 flex flex-col  justify-center">
       <h2 className="text-2xl font-bold mt-4 mb-2 text-center">{teamName}</h2>
 
       {/* Beyaz çizgi */}
@@ -57,7 +57,7 @@ const Team = ({ teamName, initialPlayers }) => {
       </div>
 
       {/* Hücum oyuncuları */}
-      <div className="flex justify-center gap-2 pt-2">
+      <div className="flex justify-center gap-2 pt-2 h-auto">
         {positions[0].map((player, colIndex) => (
           <motion.div key={colIndex} ref={createDropZone({ row: 0, col: colIndex })}>
             <Player

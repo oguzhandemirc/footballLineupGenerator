@@ -14,11 +14,11 @@ const FootballField = () => {
 
   return (
     <DndProvider backend={HTML5Backend}>
-      <div className="flex flex-col items-center p-5 bg-green-700 min-h-screen">
-        <h1 className="text-5xl font-bold text-white mb-10 text-center">Halısaha Eşleşme Uygulaması</h1>
+      <div className="flex flex-col items-center p-5 bg-green-700 w-full overflow-x-hidden  px-4">
+        <h1 className="text-5xl font-bold text-white mb-2 text-center">Halısaha Eşleşme Uygulaması</h1>
 
         {/* Takım alanı */}
-        <div className="relative w-full sm:w-3/4 h-auto bg-green-500 border-4 border-white rounded-lg shadow-lg flex flex-col justify-center p-12">
+        <div className="relative w-auto  bg-green-500 border-4 border-white rounded-lg shadow-lg flex flex-col justify-center p-">
           {currentTeam === 'A' ? (
             <Team teamName="Takım A" initialPlayers={teamA} />
           ) : (
