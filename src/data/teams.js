@@ -1,8 +1,8 @@
 // src/data/teams.js
 export const teamA = [
   { name: "Kaleci A", score: 92, role: "defans", isGoalkeeper: true },
-  { name: "Defans A1", score: 64, role: "defans", isGoalkeeper: false },
-  { name: "Defans A2", score: 80, role: "defans", isGoalkeeper: false },
+  { name: "Ahmet", score: 64, role: "defans", isGoalkeeper: false },
+  { name: "Oğuzhan", score: 80, role: "defans", isGoalkeeper: false },
   { name: "Defans A3", score: 78, role: "defans", isGoalkeeper: false },
   { name: "Hucum A1", score: 55, role: "hucum", isGoalkeeper: false },
   { name: "Hucum A2", score: 68, role: "hucum", isGoalkeeper: false },

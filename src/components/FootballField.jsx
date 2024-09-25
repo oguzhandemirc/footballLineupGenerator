@@ -3,6 +3,7 @@ import Team from './Team';
 import { teamA, teamB } from '../data/teams';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
+import backgroundImage from '../assets/abc.jpg'; // Import the background image
 
 const FootballField = () => {
   const [currentTeam, setCurrentTeam] = useState('A'); // Varsayılan olarak Takım A'yı göster
@@ -14,11 +15,21 @@ const FootballField = () => {
 
   return (
     <DndProvider backend={HTML5Backend}>
-      <div className="flex flex-col items-center p-5 bg-green-700 w-full overflow-x-hidden  px-4">
-        <h1 className="text-5xl font-bold text-white mb-2 text-center">Halısaha Eşleşme Uygulaması</h1>
+      <div
+        className="flex flex-col items-center pt-2 w-full min-h-screen overflow-x-hidden"
+        style={{
+          backgroundImage: `url(${backgroundImage})`, // Use background image
+          backgroundSize: 'cover', // Make sure the image covers the whole area
+          backgroundPosition: 'center', // Center the background image
+          backgroundRepeat: 'no-repeat', // Prevent the image from repeating
+        }}
+      >
+        <h1 className="text-2xl font-bold sm:text-5xl pt-4 text-gray-200  text-center shadow-2xl ">
+          Halısaha Eşleşme Uygulaması
+        </h1>
 
         {/* Takım alanı */}
-        <div className="relative w-auto  bg-green-500 border-4 border-white rounded-lg shadow-lg flex flex-col justify-center p-">
+        <div className="relative text-white bg-opacity-70 flex flex-col justify-center">
           {currentTeam === 'A' ? (
             <Team teamName="Takım A" initialPlayers={teamA} />
           ) : (

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useDrag } from 'react-dnd';
 import { motion } from 'framer-motion';
-import yellowCard from '../assets/yellow.webp';
+import grayCard from '../assets/gray.webp';
 import blueCard from '../assets/blue.webp';
 import redCard from '../assets/red.webp';
 import whiteCard from '../assets/white.webp';
@@ -11,7 +11,7 @@ const Player = ({ name, score, role, position, isPositionCorrect }) => {
     if (score >= 90) return blueCard;
     if (score >= 82) return whiteCard;
     if (score >= 75) return redCard;
-    return yellowCard;
+    return grayCard;
   };
 
   const getRoleLabel = (role) => {
@@ -52,7 +52,7 @@ const Player = ({ name, score, role, position, isPositionCorrect }) => {
         backgroundImage: `url(${backgroundImage})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
-        height: '190px', // Kart yüksekliği
+        height: '205px', // Kart yüksekliği
       }}
       variants={playerVariants}
     >
