@@ -1,3 +1,4 @@
+// Player.jsx
 import React from 'react';
 import { useDrag } from 'react-dnd';
 import { motion } from 'framer-motion';
@@ -15,7 +16,10 @@ const Player = ({ name, score, role, position, isPositionCorrect }) => {
   };
 
   const getRoleLabel = (role) => {
-    if (role.isGoalkeeper) return 'GK';  // Kaleci
+    if (role.isGoalkeeper) {
+      // Kalecinin gerçek mevkisini parantez içinde ekleyelim
+      return `GK (${role.role})`;
+    }
     if (role.role === 'hucum') return 'SF'; // Hücum
     if (role.role === 'defans') return 'DF'; // Defans
     return ''; // Diğer roller için boş bırak
@@ -70,7 +74,7 @@ const Player = ({ name, score, role, position, isPositionCorrect }) => {
             {name}
           </div>
           <div
-          className='text-sm sm:text-xl'
+            className='text-sm sm:text-xl'
             style={{
               textAlign: 'center',
               color: '#ffffff',
@@ -81,7 +85,7 @@ const Player = ({ name, score, role, position, isPositionCorrect }) => {
           </div>
           {roleLabel && (
             <div
-            className='text-sm sm:text-xl'
+              className='text-sm sm:text-xl'
               style={{
                 textAlign: 'center',
                 color: '#ffffff',
