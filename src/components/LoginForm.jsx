@@ -1,8 +1,9 @@
+// src/components/LoginForm.js
 import React, { useState } from "react";
-import axios from "axios";
+import AuthService from "../services/authService";
 
 const LoginForm = ({ onLogin }) => {
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState(""); // Kullanıcı adı
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -10,13 +11,9 @@ const LoginForm = ({ onLogin }) => {
     e.preventDefault();
 
     try {
-      const response = await axios.post("http://localhost:5005/api/auth/login", {
-        username: email,
-        password,
-      });
-      
-      if (response.data.token) {
-        onLogin(response.data.token); // Token'ı onLogin fonksiyonuna ilet
+      const response = await AuthService.login(username, password);
+      if (response.token) {
+        onLogin(response.token); // Token'ı üst bileşene ilet
       }
     } catch (error) {
       setErrorMessage(
@@ -27,25 +24,27 @@ const LoginForm = ({ onLogin }) => {
 
   return (
     <div className="flex justify-center items-center h-screen bg-gray-200">
-      <div className="w-full max-w-xs">
+      <div className="w-full max-w-md">
         <form
           onSubmit={handleSubmit}
           className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"
         >
           <h2 className="text-2xl font-bold text-center mb-6">Giriş Yap</h2>
+
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2">
-              E-posta
+              Kullanıcı Adı
             </label>
             <input
               type="text"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="E-postanızı girin"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              placeholder="Kullanıcı adınızı girin"
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               required
             />
           </div>
+
           <div className="mb-6">
             <label className="block text-gray-700 text-sm font-bold mb-2">
               Şifre
@@ -59,11 +58,13 @@ const LoginForm = ({ onLogin }) => {
               required
             />
           </div>
+
           {errorMessage && (
             <p className="text-red-500 text-sm text-center mb-4">
               {errorMessage}
             </p>
           )}
+
           <div className="flex items-center justify-between">
             <button
               type="submit"

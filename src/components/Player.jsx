@@ -1,7 +1,7 @@
 import React from 'react';
 import { useDrag } from 'react-dnd';
 import { motion } from 'framer-motion';
-import grayCard from '../assets/gray.webp';
+import grayCard from '../assets/yellow.webp';
 import blueCard from '../assets/blue.webp';
 import redCard from '../assets/red.webp';
 import whiteCard from '../assets/white.webp';

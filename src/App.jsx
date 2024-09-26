@@ -1,3 +1,4 @@
+// src/App.js
 import React, { useState, useEffect } from "react";
 import LoginForm from "./components/LoginForm";
 import Navbar from "./components/Navbar";
@@ -19,6 +20,7 @@ const App = () => {
   };
 
   const handleLogout = () => {
+    localStorage.removeItem('token');
     setToken(null);
   };
 
@@ -27,9 +29,9 @@ const App = () => {
       {token ? (
         <>
           <Navbar onLogout={handleLogout} />
-          <div className="pt-20"> {/* Navbar'ın sayfanın üstünü kaplamaması için padding ekledik */}
+          <div className="pt-20 p-4"> {/* Navbar'ın sayfanın üstünü kaplamaması için padding ekledik */}
             <TeamGenerator token={token} />
-            <FootballField token={token} />
+            <FootballField />
           </div>
         </>
       ) : (

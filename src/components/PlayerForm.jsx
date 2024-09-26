@@ -1,35 +1,38 @@
+// src/components/PlayerForm.js
 import React, { useState } from "react";
-import axios from "axios";
+import PlayerService from "../services/playerService";
 
 const PlayerForm = ({ token, onPlayerAdded }) => {
   const [name, setName] = useState("");
   const [score, setScore] = useState(50);
   const [role, setRole] = useState("hucum");
   const [isGoalkeeper, setIsGoalkeeper] = useState(false);
+  const [error, setError] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    try {
-      const response = await axios.post(
-        "http://localhost:5005/api/players",
-        { name, score, role, isGoalkeeper },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+    if (score < 0 || score > 100) {
+      setError("Puan 0 ile 100 arasında olmalıdır.");
+      return;
+    }
 
+    try {
+      const response = await PlayerService.addPlayer({ name, score, role, isGoalkeeper });
       onPlayerAdded(response.data);
+      setName("");
+      setScore(50);
+      setRole("hucum");
+      setIsGoalkeeper(false);
+      setError("");
     } catch (error) {
+      setError("Oyuncu eklenirken bir hata oluştu.");
       console.error("Oyuncu eklenirken hata oluştu:", error);
     }
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="bg-white p-6 rounded-lg shadow-lg space-y-4 w-full"
-    >
+    <form onSubmit={handleSubmit} className="space-y-4">
       <div>
         <label className="block text-gray-700 text-sm font-bold mb-2">
           Oyuncu Adı
@@ -67,7 +70,7 @@ const PlayerForm = ({ token, onPlayerAdded }) => {
         <select
           value={role}
           onChange={(e) => setRole(e.target.value)}
-          className="block appearance-none w-full bg-white border text-black border-gray-300 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
+          className="block appearance-none w-full bg-white border border-gray-300 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
         >
           <option value="hucum">Hücum</option>
           <option value="defans">Defans</option>
@@ -85,6 +88,10 @@ const PlayerForm = ({ token, onPlayerAdded }) => {
           className="form-checkbox h-5 w-5 text-blue-600"
         />
       </div>
+
+      {error && (
+        <p className="text-red-500 text-sm">{error}</p>
+      )}
 
       <button
         type="submit"

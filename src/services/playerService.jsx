@@ -2,7 +2,7 @@
 import axios from 'axios';
 import authHeader from '../utils/authHeader';
 
-const API_URL = 'http://localhost:5000/api/players/';
+const API_URL = 'http://localhost:5005/api/players/';
 
 class PlayerService {
   getPlayers() {
