@@ -1,24 +1,25 @@
+// Team.jsx
 import React, { useState, useEffect } from 'react';
 import Player from './Player';
-import { useDrop } from 'react-dnd';
 import { motion } from 'framer-motion';
 
 const Team = ({ teamName, initialPlayers }) => {
-  const [positions, setPositions] = useState([
-    initialPlayers.slice(4, 7),  // 3 hücum
-    initialPlayers.slice(1, 4),  // 3 defans
-    [initialPlayers[0]]          // 1 kaleci
-  ]);
+  const [positions, setPositions] = useState([]);
 
   useEffect(() => {
-    setPositions([
-      initialPlayers.slice(4, 7),  // 3 hücum
-      initialPlayers.slice(1, 4),  // 3 defans
-      [initialPlayers[0]]          // 1 kaleci
-    ]);
+    const newPositions = [];
+    const attackers = initialPlayers.filter(player => player.role === 'hucum');
+    const defenders = initialPlayers.filter(player => player.role === 'defans' && !player.isGoalkeeper);
+    const goalkeepers = initialPlayers.filter(player => player.isGoalkeeper);
+
+    newPositions.push(attackers);
+    newPositions.push(defenders);
+    newPositions.push(goalkeepers);
+
+    setPositions(newPositions);
   }, [initialPlayers]);
 
-  // Oyuncu pozisyonunu değiştirme
+  // Oyuncu pozisyonunu değiştirme fonksiyonu
   const movePlayer = (fromPosition, toPosition) => {
     const newPositions = positions.map((row) => [...row]);
     const playerToMove = newPositions[fromPosition.row][fromPosition.col];
@@ -27,19 +28,7 @@ const Team = ({ teamName, initialPlayers }) => {
     setPositions(newPositions);
   };
 
-  // Drop alanı yaratma
-  const createDropZone = (toPosition) => {
-    const [, drop] = useDrop({
-      accept: 'player',
-      drop: (draggedPlayer) => movePlayer(draggedPlayer.position, toPosition),
-      collect: (monitor) => ({
-        isOver: monitor.isOver(),
-      }),
-    });
-    return drop;
-  };
-
-  // Doğru pozisyon kontrolü
+  // isPositionCorrect fonksiyonu
   const isPositionCorrect = (player, rowIndex) => {
     if (rowIndex === 0 && player.role !== 'hucum') return false;
     if (rowIndex === 1 && player.role !== 'defans') return false;
@@ -48,7 +37,7 @@ const Team = ({ teamName, initialPlayers }) => {
   };
 
   return (
-    <motion.div className="relative w-full h-full p-2 flex flex-col  justify-center">
+    <motion.div className="relative w-full h-full p-2 flex flex-col justify-center">
       <h2 className="text-2xl font-bold mt-4 mb-2 text-center">{teamName}</h2>
 
       {/* Beyaz çizgi */}
@@ -58,13 +47,14 @@ const Team = ({ teamName, initialPlayers }) => {
 
       {/* Hücum oyuncuları */}
       <div className="flex justify-center gap-2 pt-2 h-auto">
-        {positions[0].map((player, colIndex) => (
-          <motion.div key={colIndex} ref={createDropZone({ row: 0, col: colIndex })}>
+        {positions[0] && positions[0].map((player, colIndex) => (
+          <motion.div key={colIndex}>
             <Player
               name={player.name}
               score={player.score}
               role={{ role: player.role, isGoalkeeper: player.isGoalkeeper }}
               position={{ row: 0, col: colIndex }}
+              movePlayer={movePlayer}
               isPositionCorrect={isPositionCorrect(player, 0)}
             />
           </motion.div>
@@ -73,13 +63,14 @@ const Team = ({ teamName, initialPlayers }) => {
 
       {/* Defans oyuncuları */}
       <div className="flex justify-center gap-2 pt-2">
-        {positions[1].map((player, colIndex) => (
-          <motion.div key={colIndex} ref={createDropZone({ row: 1, col: colIndex })}>
+        {positions[1] && positions[1].map((player, colIndex) => (
+          <motion.div key={colIndex}>
             <Player
               name={player.name}
               score={player.score}
               role={{ role: player.role, isGoalkeeper: player.isGoalkeeper }}
               position={{ row: 1, col: colIndex }}
+              movePlayer={movePlayer}
               isPositionCorrect={isPositionCorrect(player, 1)}
             />
           </motion.div>
@@ -88,15 +79,18 @@ const Team = ({ teamName, initialPlayers }) => {
 
       {/* Kaleci */}
       <div className="flex justify-center mt-2">
-        <motion.div ref={createDropZone({ row: 2, col: 0 })}>
-          <Player
-            name={positions[2][0].name}
-            score={positions[2][0].score}
-            role={{ role: positions[2][0].role, isGoalkeeper: positions[2][0].isGoalkeeper }}
-            position={{ row: 2, col: 0 }}
-            isPositionCorrect={isPositionCorrect(positions[2][0], 2)}
-          />
-        </motion.div>
+        {positions[2] && positions[2][0] && (
+          <motion.div>
+            <Player
+              name={positions[2][0].name}
+              score={positions[2][0].score}
+              role={{ role: positions[2][0].role, isGoalkeeper: positions[2][0].isGoalkeeper }}
+              position={{ row: 2, col: 0 }}
+              movePlayer={movePlayer}
+              isPositionCorrect={isPositionCorrect(positions[2][0], 2)}
+            />
+          </motion.div>
+        )}
       </div>
     </motion.div>
   );

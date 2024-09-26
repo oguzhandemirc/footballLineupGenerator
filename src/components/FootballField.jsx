@@ -1,49 +1,55 @@
 import React, { useState } from 'react';
 import Team from './Team';
-import { teamA, teamB } from '../data/teams';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
-import backgroundImage from '../assets/abc.jpg'; // Import the background image
+import backgroundImage from '../assets/abc.jpg';
 
-const FootballField = () => {
-  const [currentTeam, setCurrentTeam] = useState('A'); // Varsayılan olarak Takım A'yı göster
+const FootballField = ({ teams }) => {
+  const [currentTeam, setCurrentTeam] = useState('A');
 
-  // Takım değiştirme fonksiyonu
-  const handleTeamSwitch = (team) => {
-    setCurrentTeam(team);
-  };
+  // Log the teams to inspect them
+  console.log('FootballField teams:', teams);
+
+  if (!teams || (!teams.teamA && !teams.teamB)) {
+    return <div>No teams available</div>;
+  }
+
+  const teamAPlayers = teams.teamA?.players || [];
+  const teamBPlayers = teams.teamB?.players || [];
 
   return (
     <DndProvider backend={HTML5Backend}>
       <div
         className="flex flex-col items-center pt-2 w-full min-h-screen overflow-x-hidden"
         style={{
-          backgroundImage: `url(${backgroundImage})`, // Use background image
-          backgroundSize: 'cover', // Make sure the image covers the whole area
-          backgroundPosition: 'center', // Center the background image
-          backgroundRepeat: 'no-repeat', // Prevent the image from repeating
+          backgroundImage: `url(${backgroundImage})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
         }}
       >
-        <h1 className="text-2xl font-bold sm:text-5xl pt-4 text-gray-200  text-center shadow-2xl ">
+        <h1 className="text-2xl font-bold sm:text-5xl pt-4 text-gray-200 text-center shadow-2xl">
           Halısaha Eşleşme Uygulaması
         </h1>
 
-        {/* Takım alanı */}
+        {/* Team Area */}
         <div className="relative text-white bg-opacity-70 flex flex-col justify-center">
-          {currentTeam === 'A' ? (
-            <Team teamName="Takım A" initialPlayers={teamA} />
+          {currentTeam === 'A' && teamAPlayers.length > 0 ? (
+            <Team teamName="Takım A" initialPlayers={teamAPlayers} />
+          ) : currentTeam === 'B' && teamBPlayers.length > 0 ? (
+            <Team teamName="Takım B" initialPlayers={teamBPlayers} />
           ) : (
-            <Team teamName="Takım B" initialPlayers={teamB} />
+            <div>No players in this team</div>
           )}
         </div>
 
-        {/* Takım geçiş butonları */}
+        {/* Team Switch Buttons */}
         <div className="mt-5 flex space-x-4">
           <button
             className={`px-6 py-3 text-lg font-bold text-white bg-blue-600 rounded-lg focus:outline-none ${
               currentTeam === 'A' ? 'opacity-50 cursor-not-allowed' : ''
             }`}
-            onClick={() => handleTeamSwitch('A')}
+            onClick={() => setCurrentTeam('A')}
             disabled={currentTeam === 'A'}
           >
             Takım A
@@ -52,7 +58,7 @@ const FootballField = () => {
             className={`px-6 py-3 text-lg font-bold text-white bg-red-600 rounded-lg focus:outline-none ${
               currentTeam === 'B' ? 'opacity-50 cursor-not-allowed' : ''
             }`}
-            onClick={() => handleTeamSwitch('B')}
+            onClick={() => setCurrentTeam('B')}
             disabled={currentTeam === 'B'}
           >
             Takım B

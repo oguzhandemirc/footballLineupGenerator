@@ -1,8 +1,8 @@
-// src/components/TeamGenerator.js
 import React, { useState, useEffect } from "react";
 import PlayerService from "../services/playerService";
 import TeamDisplay from "./TeamDisplay";
 import TeamService from "../services/teamService";
+import FootballField from './FootballField';
 
 const TeamGenerator = ({ token }) => {
   const [players, setPlayers] = useState([]);
@@ -18,8 +18,8 @@ const TeamGenerator = ({ token }) => {
     try {
       const response = await PlayerService.getPlayers();
       setPlayers(response.data);
-    } catch (error) {
-      console.error("Oyuncular alınırken hata oluştu:", error);
+    } catch (err) {
+      console.error("Oyuncular alınırken hata oluştu:", err);
       setError("Oyuncular alınırken bir hata oluştu.");
     }
   };
@@ -38,17 +38,18 @@ const TeamGenerator = ({ token }) => {
       return;
     }
 
-    if (![6, 7, 8].includes(selectedPlayerIds.length)) {
-      setError("Takım oluşturmak için 6, 7 veya 8 oyuncu seçmelisiniz.");
-      return;
-    }
+    // if (![6, 7, 8].includes(selectedPlayerIds.length)) {
+    //   setError("Takım oluşturmak için 6, 7 veya 8 oyuncu seçmelisiniz.");
+    //   return;
+    // }
 
     try {
       const response = await TeamService.generateTeams(selectedPlayerIds);
       setTeams(response.data);
       setError("");
-    } catch (error) {
-      console.error("Takımlar oluşturulurken hata oluştu:", error);
+      console.log('Generated teams:', response.data);
+    } catch (err) {
+      console.error("Takımlar oluşturulurken hata oluştu:", err);
       setError("Takımlar oluşturulurken bir hata oluştu.");
     }
   };
@@ -71,9 +72,8 @@ const TeamGenerator = ({ token }) => {
           className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mr-4"
         >
           Takımları Oluştur
-          
         </button>
-      
+
         <button
           onClick={handleSelectAll}
           className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded"
@@ -99,7 +99,8 @@ const TeamGenerator = ({ token }) => {
         ))}
       </div>
 
-      {teams && <TeamDisplay teams={teams} />}
+      {/* Render FootballField with the generated teams */}
+      {teams && <FootballField teams={teams} />}
     </div>
   );
 };
