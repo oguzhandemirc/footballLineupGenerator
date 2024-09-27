@@ -5,10 +5,9 @@ import { useDrop } from 'react-dnd';
 import { motion } from 'framer-motion';
 
 const Team = ({ teamName, initialPlayers }) => {
-  const [positions, setPositions] = useState([]);
+  const [positions, setPositions] = useState([[], [], []]);
 
   useEffect(() => {
-    const newPositions = [];
     const attackers = initialPlayers.filter(
       (player) => player.role === 'hucum' && !player.isGoalkeeper
     );
@@ -17,14 +16,10 @@ const Team = ({ teamName, initialPlayers }) => {
     );
     const goalkeepers = initialPlayers.filter((player) => player.isGoalkeeper);
 
-    newPositions[0] = attackers;
-    newPositions[1] = defenders;
-    newPositions[2] = goalkeepers;
-
-    setPositions(newPositions);
+    setPositions([attackers || [], defenders || [], goalkeepers || []]);
   }, [initialPlayers]);
 
-  // Oyuncuyu yeni hatta taşıma
+  // Oyuncuyu yeni hatta taşıma fonksiyonu
   const movePlayer = (fromPosition, toRowIndex) => {
     const newPositions = positions.map((row) => [...row]);
 
@@ -40,29 +35,50 @@ const Team = ({ teamName, initialPlayers }) => {
     } else if (toRowIndex === 1) {
       updatedPlayer.role = 'defans';
       updatedPlayer.isGoalkeeper = false;
+    } else if (toRowIndex === 2) {
+      updatedPlayer.role = 'defans';
+      updatedPlayer.isGoalkeeper = true;
     }
 
-    // Oyuncuyu yeni hatta ekle
+    // Mevcut kaleciyle yer değiştirme
+    if (toRowIndex === 2) {
+      // Eğer mevcut bir kaleci varsa, onu defanslara geri gönder
+      if (newPositions[2].length > 0) {
+        const oldGoalkeeper = newPositions[2][0];
+        oldGoalkeeper.isGoalkeeper = false;
+        newPositions[1].push(oldGoalkeeper);
+        newPositions[2] = []; // Kaleci pozisyonunu temizle
+      }
+    }
+
+    // Güncellenmiş oyuncuyu yeni pozisyona ekle
     newPositions[toRowIndex].push(updatedPlayer);
 
     setPositions(newPositions);
   };
 
-  // Hücum hattı için drop hedefi
-  const [{ isOver: isOverAttackers }, dropAttackers] = useDrop({
+  // Her hat için drop hedefleri
+  const [{ isOverAttackers }, dropAttackers] = useDrop({
     accept: 'player',
     drop: (item) => movePlayer(item.position, 0),
     collect: (monitor) => ({
-      isOver: monitor.isOver(),
+      isOverAttackers: monitor.isOver(),
     }),
   });
 
-  // Defans hattı için drop hedefi
-  const [{ isOver: isOverDefenders }, dropDefenders] = useDrop({
+  const [{ isOverDefenders }, dropDefenders] = useDrop({
     accept: 'player',
     drop: (item) => movePlayer(item.position, 1),
     collect: (monitor) => ({
-      isOver: monitor.isOver(),
+      isOverDefenders: monitor.isOver(),
+    }),
+  });
+
+  const [{ isOverGoalkeeper }, dropGoalkeeper] = useDrop({
+    accept: 'player',
+    drop: (item) => movePlayer(item.position, 2),
+    collect: (monitor) => ({
+      isOverGoalkeeper: monitor.isOver(),
     }),
   });
 
@@ -77,13 +93,14 @@ const Team = ({ teamName, initialPlayers }) => {
         style={{
           borderTop: isOverAttackers ? '2px dashed green' : '2px solid transparent',
           backgroundColor: isOverAttackers ? 'rgba(0, 255, 0, 0.1)' : 'transparent',
-          minHeight: '150px', // Hücum hattının yüksekliği
+          minHeight: '150px',
         }}
       >
         {positions[0] &&
           positions[0].map((player, colIndex) => (
             <motion.div key={player.id}>
               <Player
+                id={player.id}
                 name={player.name}
                 score={player.score}
                 role={{ role: player.role, isGoalkeeper: player.isGoalkeeper }}
@@ -100,13 +117,14 @@ const Team = ({ teamName, initialPlayers }) => {
         style={{
           borderTop: isOverDefenders ? '2px dashed blue' : '2px solid transparent',
           backgroundColor: isOverDefenders ? 'rgba(0, 0, 255, 0.1)' : 'transparent',
-          minHeight: '150px', // Defans hattının yüksekliği
+          minHeight: '150px',
         }}
       >
         {positions[1] &&
           positions[1].map((player, colIndex) => (
             <motion.div key={player.id}>
               <Player
+                id={player.id}
                 name={player.name}
                 score={player.score}
                 role={{ role: player.role, isGoalkeeper: player.isGoalkeeper }}
@@ -117,10 +135,19 @@ const Team = ({ teamName, initialPlayers }) => {
       </div>
 
       {/* Kaleci */}
-      <div className="flex justify-center mt-2">
-        {positions[2] && positions[2][0] && (
+      <div
+        ref={dropGoalkeeper}
+        className="flex justify-center mt-2"
+        style={{
+          borderTop: isOverGoalkeeper ? '2px dashed orange' : '2px solid transparent',
+          backgroundColor: isOverGoalkeeper ? 'rgba(255, 165, 0, 0.1)' : 'transparent',
+          minHeight: '150px',
+        }}
+      >
+        {positions[2] && positions[2][0] ? (
           <motion.div>
             <Player
+              id={positions[2][0].id}
               name={positions[2][0].name}
               score={positions[2][0].score}
               role={{
@@ -131,6 +158,8 @@ const Team = ({ teamName, initialPlayers }) => {
               draggable={false}
             />
           </motion.div>
+        ) : (
+          <div style={{ color: 'white', textAlign: 'center' }}>Kaleci Yok</div>
         )}
       </div>
     </motion.div>

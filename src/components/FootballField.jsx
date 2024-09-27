@@ -29,7 +29,7 @@ const FootballField = ({ teams }) => {
         {/* Üst Kısma Sabitlenmiş Başlık */}
         <div className="fixed top-0 left-0 w-full flex flex-col items-center py-2 bg-opacity-60 bg-black z-10">
           {/* Takım Seçme Butonları */}
-          <div className="flex space-x-4 ">
+          <div className="flex space-x-4">
             <button
               className={`px-6 py-3 text-lg font-bold text-white bg-blue-600 rounded-lg focus:outline-none ${
                 currentTeam === "A" ? "opacity-50 cursor-not-allowed" : ""

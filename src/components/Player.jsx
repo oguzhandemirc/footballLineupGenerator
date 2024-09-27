@@ -7,7 +7,7 @@ import blueCard from '../assets/blue.webp';
 import redCard from '../assets/red.webp';
 import whiteCard from '../assets/white.webp';
 
-const Player = ({ name, score, role, position }) => {
+const Player = ({ id, name, score, role, position, draggable = true }) => {
   const getBackgroundImage = (score) => {
     if (score >= 90) return blueCard;
     if (score >= 82) return whiteCard;
@@ -19,7 +19,7 @@ const Player = ({ name, score, role, position }) => {
     if (role.isGoalkeeper) {
       return 'GK';
     }
-    if (role.role === 'hucum') return 'SF'; // Hücum
+    if (role.role === 'hucum') return 'SF'; // Forvet
     if (role.role === 'defans') return 'DF'; // Defans
     return '';
   };
@@ -30,12 +30,13 @@ const Player = ({ name, score, role, position }) => {
   const [{ isDragging }, drag, dragPreview] = useDrag({
     type: 'player',
     item: { position },
+    canDrag: draggable,
     collect: (monitor) => ({
       isDragging: monitor.isDragging(),
     }),
   });
 
-  // Drag preview'i kapat
+  // Drag önizlemesini kapat
   dragPreview(null);
 
   const playerVariants = {
@@ -45,14 +46,17 @@ const Player = ({ name, score, role, position }) => {
 
   return (
     <motion.div
-      ref={drag}
-      className={`flex flex-col bg-opacity-0 items-center justify-center mb-2 p-4 transition transform hover:scale-110 w-[90px] sm:w-[180px]`}
+      ref={draggable ? drag : null}
+      className={`flex flex-col bg-opacity-0 items-center justify-center mb-2 p-4 transition transform ${
+        draggable ? 'hover:scale-110' : ''
+      } w-[90px] sm:w-[180px]`}
       style={{
         opacity: isDragging ? 0.5 : 1,
         backgroundImage: `url(${backgroundImage})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         height: '205px', // Kart yüksekliği
+        cursor: draggable ? 'grab' : 'default',
       }}
       variants={playerVariants}
       initial="hidden"
