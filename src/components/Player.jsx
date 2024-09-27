@@ -18,7 +18,8 @@ const Player = ({ name, score, role, position, isPositionCorrect }) => {
   const getRoleLabel = (role) => {
     if (role.isGoalkeeper) {
       // Kalecinin gerçek mevkisini parantez içinde ekleyelim
-      return `GK (${role.role})`;
+      // return `GK (${role.role})`;
+      return `GK`;
     }
     if (role.role === 'hucum') return 'SF'; // Hücum
     if (role.role === 'defans') return 'DF'; // Defans
