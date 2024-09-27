@@ -1,3 +1,4 @@
+// FootballField.jsx
 import React, { useState } from "react";
 import Team from "./Team";
 import { DndProvider } from "react-dnd";
@@ -7,53 +8,12 @@ import backgroundImage from "../assets/abc.jpg";
 const FootballField = ({ teams }) => {
   const [currentTeam, setCurrentTeam] = useState("A");
 
-  // Log the teams to inspect them
-  console.log("FootballField teams:", teams);
-
   if (!teams || (!teams.teamA && !teams.teamB)) {
     return <div></div>;
   }
 
   const teamAPlayers = teams.teamA?.players || [];
   const teamBPlayers = teams.teamB?.players || [];
-  const teamAavgScore = (
-    teamAPlayers?.reduce((acc, player) => acc + player.score, 0) /
-    teamAPlayers.length
-  ).toFixed(1);
-  const teamBavgScore = (
-    teamBPlayers?.reduce((acc, player) => acc + player.score, 0) /
-    teamBPlayers.length
-  ).toFixed(1);
-  const teamAavgDefans = (
-    teamAPlayers
-      ?.filter((player) => player.role === "defans")
-      ?.reduce((acc, player) => acc + player.score, 0) /
-    teamAPlayers?.filter((player) => player.role === "defans")?.length
-  ).toFixed(1);
-  const teamBavgDefans = (
-    teamBPlayers
-      ?.filter((player) => player.role === "defans")
-      ?.reduce((acc, player) => acc + player.score, 0) /
-    teamBPlayers?.filter((player) => player.role === "defans")?.length
-  ).toFixed(1);
-  const teamAavgHucum = (
-    teamAPlayers
-      ?.filter((player) => player.role === "hucum")
-      ?.reduce((acc, player) => acc + player.score, 0) /
-    teamAPlayers?.filter((player) => player.role === "hucum")?.length
-  ).toFixed(1);
-  const teamBavgHucum = (
-    teamBPlayers
-      ?.filter((player) => player.role === "hucum")
-      ?.reduce((acc, player) => acc + player.score, 0) /
-    teamBPlayers?.filter((player) => player.role === "hucum")?.length
-  ).toFixed(1);
-  sessionStorage.setItem("teamAavgScore", teamAavgScore.slice(0, 2));
-  sessionStorage.setItem("teamBavgScore", teamBavgScore.slice(0, 2));
-  sessionStorage.setItem("teamAavgDefans", teamAavgDefans.slice(0, 2));
-  sessionStorage.setItem("teamBavgDefans", teamBavgDefans.slice(0, 2));
-  sessionStorage.setItem("teamAavgHucum", teamAavgHucum.slice(0, 2));
-  sessionStorage.setItem("teamBavgHucum", teamBavgHucum.slice(0, 2));
 
   return (
     <DndProvider backend={HTML5Backend}>
@@ -77,7 +37,7 @@ const FootballField = ({ teams }) => {
               onClick={() => setCurrentTeam("A")}
               disabled={currentTeam === "A"}
             >
-              Takım A 
+              Takım A
             </button>
             <button
               className={`px-6 py-3 text-lg font-bold text-white bg-red-600 rounded-lg focus:outline-none ${
@@ -96,11 +56,11 @@ const FootballField = ({ teams }) => {
           {/* pt-24 => üstteki sabitlenen header'ın altında biraz boşluk bırakmak için */}
           <div className="relative text-white bg-opacity-70 flex flex-col justify-end mb-5">
             {currentTeam === "A" && teamAPlayers.length > 0 ? (
-              <Team teamName="" initialPlayers={teamAPlayers} />
+              <Team teamName="Takım A" initialPlayers={teamAPlayers} />
             ) : currentTeam === "B" && teamBPlayers.length > 0 ? (
-              <Team teamName="" initialPlayers={teamBPlayers} />
+              <Team teamName="Takım B" initialPlayers={teamBPlayers} />
             ) : (
-              <div>No players in this team</div>
+              <div>Bu takımda oyuncu yok</div>
             )}
           </div>
         </div>
