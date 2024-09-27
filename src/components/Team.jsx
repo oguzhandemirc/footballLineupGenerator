@@ -1,31 +1,27 @@
 // Team.jsx
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import Player from './Player';
 import { useDrop } from 'react-dnd';
 import { motion } from 'framer-motion';
 
-const Team = ({ teamName, initialPlayers }) => {
-  const [positions, setPositions] = useState([[], [], []]);
-
-  useEffect(() => {
-    const attackers = initialPlayers.filter(
-      (player) => player.role === 'hucum' && !player.isGoalkeeper
-    );
-    const defenders = initialPlayers.filter(
-      (player) => player.role === 'defans' && !player.isGoalkeeper
-    );
-    const goalkeepers = initialPlayers.filter((player) => player.isGoalkeeper);
-
-    setPositions([attackers || [], defenders || [], goalkeepers || []]);
-  }, [initialPlayers]);
-
+const Team = ({ teamName, positions, setPositions }) => {
   // Oyuncuyu yeni hatta taşıma fonksiyonu
   const movePlayer = (fromPosition, toRowIndex) => {
-    const newPositions = positions.map((row) => [...row]);
+    const newPositions = {
+      attackers: [...positions.attackers],
+      defenders: [...positions.defenders],
+      goalkeepers: [...positions.goalkeepers],
+    };
 
-    // Oyuncuyu eski konumundan kaldır
-    const player = newPositions[fromPosition.row][fromPosition.col];
-    newPositions[fromPosition.row].splice(fromPosition.col, 1);
+    // Eski pozisyondan oyuncuyu kaldır
+    let player;
+    if (fromPosition.row === 0) {
+      player = newPositions.attackers.splice(fromPosition.col, 1)[0];
+    } else if (fromPosition.row === 1) {
+      player = newPositions.defenders.splice(fromPosition.col, 1)[0];
+    } else if (fromPosition.row === 2) {
+      player = newPositions.goalkeepers.splice(fromPosition.col, 1)[0];
+    }
 
     // Oyuncunun rolünü güncelle
     let updatedPlayer = { ...player };
@@ -43,17 +39,24 @@ const Team = ({ teamName, initialPlayers }) => {
     // Mevcut kaleciyle yer değiştirme
     if (toRowIndex === 2) {
       // Eğer mevcut bir kaleci varsa, onu defanslara geri gönder
-      if (newPositions[2].length > 0) {
-        const oldGoalkeeper = newPositions[2][0];
+      if (newPositions.goalkeepers.length > 0) {
+        const oldGoalkeeper = newPositions.goalkeepers[0];
         oldGoalkeeper.isGoalkeeper = false;
-        newPositions[1].push(oldGoalkeeper);
-        newPositions[2] = []; // Kaleci pozisyonunu temizle
+        newPositions.defenders.push(oldGoalkeeper);
+        newPositions.goalkeepers = []; // Kaleci pozisyonunu temizle
       }
     }
 
     // Güncellenmiş oyuncuyu yeni pozisyona ekle
-    newPositions[toRowIndex].push(updatedPlayer);
+    if (toRowIndex === 0) {
+      newPositions.attackers.push(updatedPlayer);
+    } else if (toRowIndex === 1) {
+      newPositions.defenders.push(updatedPlayer);
+    } else if (toRowIndex === 2) {
+      newPositions.goalkeepers.push(updatedPlayer);
+    }
 
+    // Pozisyonları güncelle
     setPositions(newPositions);
   };
 
@@ -96,8 +99,8 @@ const Team = ({ teamName, initialPlayers }) => {
           minHeight: '150px',
         }}
       >
-        {positions[0] &&
-          positions[0].map((player, colIndex) => (
+        {positions.attackers &&
+          positions.attackers.map((player, colIndex) => (
             <motion.div key={player.id}>
               <Player
                 id={player.id}
@@ -120,8 +123,8 @@ const Team = ({ teamName, initialPlayers }) => {
           minHeight: '150px',
         }}
       >
-        {positions[1] &&
-          positions[1].map((player, colIndex) => (
+        {positions.defenders &&
+          positions.defenders.map((player, colIndex) => (
             <motion.div key={player.id}>
               <Player
                 id={player.id}
@@ -144,15 +147,15 @@ const Team = ({ teamName, initialPlayers }) => {
           minHeight: '150px',
         }}
       >
-        {positions[2] && positions[2][0] ? (
+        {positions.goalkeepers && positions.goalkeepers[0] ? (
           <motion.div>
             <Player
-              id={positions[2][0].id}
-              name={positions[2][0].name}
-              score={positions[2][0].score}
+              id={positions.goalkeepers[0].id}
+              name={positions.goalkeepers[0].name}
+              score={positions.goalkeepers[0].score}
               role={{
-                role: positions[2][0].role,
-                isGoalkeeper: positions[2][0].isGoalkeeper,
+                role: positions.goalkeepers[0].role,
+                isGoalkeeper: positions.goalkeepers[0].isGoalkeeper,
               }}
               position={{ row: 2, col: 0 }}
               draggable={false}

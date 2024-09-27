@@ -1,4 +1,4 @@
-// components/TeamGenerator.js
+// components/TeamGenerator.jsx
 import React, { useState, useEffect } from "react";
 import PlayerService from "../services/playerService";
 import TeamService from "../services/teamService";
@@ -320,7 +320,7 @@ const TeamGenerator = ({ token }) => {
       </Modal>
 
       {/* Sahanın içine FootballField bileşenini gömüyoruz */}
-      <FootballField teams={teams} />
+      {teams && <FootballField teams={teams} />}
     </div>
   );
 };
