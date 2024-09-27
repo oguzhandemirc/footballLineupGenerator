@@ -40,11 +40,6 @@ const Team = ({ teamName, initialPlayers }) => {
     <motion.div className="relative w-full h-full p-2 flex flex-col justify-center">
       <h2 className="text-2xl font-bold mt-4 mb-2 text-center">{teamName}</h2>
 
-      {/* Beyaz çizgi */}
-      <div className="relative">
-        <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-1 h-full bg-white"></div>
-      </div>
-
       {/* Hücum oyuncuları */}
       <div className="flex justify-center gap-2 pt-2 h-auto">
         {positions[0] && positions[0].map((player, colIndex) => (

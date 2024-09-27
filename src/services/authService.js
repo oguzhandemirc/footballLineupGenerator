@@ -21,6 +21,7 @@ class AuthService {
 
   logout() {
     localStorage.removeItem("token");
+    sessionStorage.clear();
   }
 
   getCurrentUser() {
