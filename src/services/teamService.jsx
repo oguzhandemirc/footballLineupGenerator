@@ -2,7 +2,7 @@
 import axios from 'axios';
 import authHeader from '../utils/authHeader';
 
-const API_URL = 'http://localhost:5005/api/teams/';
+const API_URL = 'https://api.kadrom.com.tr/api/teams/';
 
 class TeamService {
   generateTeams(playerIds) {

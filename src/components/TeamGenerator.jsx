@@ -155,6 +155,26 @@ const TeamGenerator = ({ token }) => {
     }, 500);
   };
 
+  const modalWithPlayers = () => {
+    if (players.length === 0) {
+      setError("Oyuncu eklemelisiniz.");
+      return;
+    } else {
+      fetchPlayers();
+      openModal();
+    }
+  };
+
+  const handleDeletePlayer = async (playerId) => {
+    try {
+      await PlayerService.deletePlayer(playerId, token);
+      x;
+      fetchPlayers();
+    } catch (err) {
+      console.error("Oyuncu silinirken hata oluştu:", err);
+      setError("Oyuncu silinirken bir hata oluştu.");
+    }
+  };
   return (
     <div className="relative w-full h-screen">
       {/* Butonları sağ alt köşeye sabitliyoruz */}
@@ -163,7 +183,7 @@ const TeamGenerator = ({ token }) => {
 
         {/* Takımları Oluştur Butonu */}
         <button
-          onClick={openModal}
+          onClick={modalWithPlayers}
           className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded flex items-center justify-center"
         >
           {/* Yalnızca emoji mobilde görünecek */}
@@ -172,7 +192,7 @@ const TeamGenerator = ({ token }) => {
           </span>
           <span className="hidden sm:inline">Takımları Oluştur</span>
         </button>
-         
+
         {/* Tekrar Kar Butonu */}
         {teams && (
           <button
@@ -189,10 +209,11 @@ const TeamGenerator = ({ token }) => {
             <span className="hidden sm:inline">Tekrar Kar</span>
           </button>
         )}
-        
+
         {/* İstatistikler Geniş Ekran */}
-        <div>
+        <div className={`${!stats.teamAavgDefans ? "hidden" : ""}`}>
           <div className="gap-4 bg-orange-400 rounded-lg p-2 shadow-xl sm:flex hidden ">
+            {/* <div className="border-r-2 pr-2 "> */}
             <div className="border-r-2 pr-2 ">
               <p className="text-center ">
                 <strong className="border-b-2">Takım A</strong>
@@ -244,16 +265,13 @@ const TeamGenerator = ({ token }) => {
           </button>
         )}
       </div>
-
-
       {/* Zar Atma Animasyonu */}
       {showDiceAnimation && (
         <div className="fixed inset-0 z-30 flex items-center justify-center bg-black bg-opacity-50">
           <div className="text-white text-6xl animate-spin">🎲</div>
         </div>
       )}
-
-      {/* Modal - Oyuncu Seçimi */}
+      {/* /* Modal - Oyuncu Seçimi */}
       <Modal isOpen={isModalOpen} onClose={closeModal}>
         <h2 className="text-xl font-bold mb-4">Oyuncu Seçimi</h2>
         {error && <p className="text-red-500 mb-4">{error}</p>}
@@ -270,9 +288,15 @@ const TeamGenerator = ({ token }) => {
                 onChange={() => handleCheckboxChange(player.id)}
                 className="form-checkbox h-5 w-5 text-blue-600"
               />
-              <label htmlFor={`player-${player.id}`} className="ml-2">
+              <label htmlFor={`player-${player.id}`} className="ml-2 flex-1">
                 {player.name} - {player.role} - Puan: {player.score}
               </label>
+              <button
+                onClick={() => handleDeletePlayer(player.id)}
+                className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded"
+              >
+                Sil
+              </button>
             </div>
           ))}
         </div>
@@ -291,8 +315,7 @@ const TeamGenerator = ({ token }) => {
           </button>
         </div>
       </Modal>
-
-      {/* Modal - İstatistikler */}
+      {/* /* Modal - İstatistikler */}
       <Modal isOpen={isStatsModalOpen} onClose={closeStatsModal}>
         <h2 className="text-xl font-bold mb-4">İstatistikler</h2>
         <div className="space-y-2">
@@ -318,7 +341,6 @@ const TeamGenerator = ({ token }) => {
           </button>
         </div>
       </Modal>
-
       {/* Sahanın içine FootballField bileşenini gömüyoruz */}
       {teams && <FootballField teams={teams} />}
     </div>

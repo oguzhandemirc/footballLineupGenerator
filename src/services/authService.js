@@ -1,7 +1,7 @@
 // src/services/authService.js
 import axios from "axios";
 
-const API_URL = "http://localhost:5005/api/auth/";
+const API_URL = "https://api.kadrom.com.tr/api/auth/";
 
 class AuthService {
   register(username, password) {
