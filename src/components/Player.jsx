@@ -86,7 +86,7 @@ const Player = ({ id, name, score, role, position, draggable = true }) => {
           >
             {name}
           </div>
-          <div className="flex  justify-between flex-row-reverse px-10 pt-16 ">
+          <div className="flex justify-between flex-row-reverse pt-12 py-2  md:px-10 md:pt-16 ">
             <div
               className="text-sm sm:text-xl drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.8)]
 "

@@ -86,13 +86,13 @@ const Team = ({ teamName, positions, setPositions }) => {
   });
 
   return (
-    <motion.div className="relative w-full h-full p-2 flex flex-col justify-center">
-      <h2 className="text-2xl font-bold mt-4 mb-2 text-center">{teamName}</h2>
+    <motion.div className="relative w-full h-full md:p-2 flex flex-col justify-center md:space-y-16">
+      <h2 className="text-2xl font-bold md:mt-4 md:mb-2 text-center ">{teamName}</h2>
 
       {/* Hücum oyuncuları */}
       <div
         ref={dropAttackers}
-        className="flex justify-center gap-2 pt-2 h-auto"
+        className="flex justify-center  md:gap-2 pt-2 h-auto"
         style={{
           borderTop: isOverAttackers ? '2px dashed green' : '2px solid transparent',
           backgroundColor: isOverAttackers ? 'rgba(0, 255, 0, 0.1)' : 'transparent',
@@ -116,7 +116,7 @@ const Team = ({ teamName, positions, setPositions }) => {
       {/* Defans oyuncuları */}
       <div
         ref={dropDefenders}
-        className="flex justify-center gap-2 pt-2"
+        className="flex justify-center md:gap-2 md:pt-2"
         style={{
           borderTop: isOverDefenders ? '2px dashed blue' : '2px solid transparent',
           backgroundColor: isOverDefenders ? 'rgba(0, 0, 255, 0.1)' : 'transparent',
@@ -140,11 +140,11 @@ const Team = ({ teamName, positions, setPositions }) => {
       {/* Kaleci */}
       <div
         ref={dropGoalkeeper}
-        className="flex justify-center mt-2"
+        className="flex justify-center öd:mt-2"
         style={{
           borderTop: isOverGoalkeeper ? '2px dashed orange' : '2px solid transparent',
           backgroundColor: isOverGoalkeeper ? 'rgba(255, 165, 0, 0.1)' : 'transparent',
-          minHeight: '150px',
+          minHeight: '100px',
         }}
       >
         {positions.goalkeepers && positions.goalkeepers[0] ? (

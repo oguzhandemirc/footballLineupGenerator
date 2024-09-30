@@ -69,7 +69,7 @@ const FootballField = ({ teams }) => {
         {/* Üst Kısma Sabitlenmiş Başlık */}
         <div className="fixed top-0 left-0 w-full flex flex-col items-center py-2 bg-opacity-60 bg-black z-10">
           {/* Takım Seçme Butonları */}
-          <div className="flex space-x-4">
+          <div className="flex space-x-4 md:pr-2 pr-6">
             <button
               className={`px-6 py-3 text-lg font-bold text-white bg-blue-600 rounded-lg focus:outline-none ${
                 currentTeam === "A" ? "opacity-50 cursor-not-allowed" : ""
@@ -92,8 +92,7 @@ const FootballField = ({ teams }) => {
         </div>
 
         {/* Takım Alanı (Saha) */}
-        <div className="flex flex-col justify-end items-center w-full min-h-screen pt-24">
-          {/* pt-24 => üstteki sabitlenen header'ın altında biraz boşluk bırakmak için */}
+        <div className="flex flex-col items-center w-full min-h-screen pt-24">
           <div className="relative text-white bg-opacity-70 flex flex-col justify-end mb-5">
             {currentTeam === "A" && teams.teamA ? (
               <Team

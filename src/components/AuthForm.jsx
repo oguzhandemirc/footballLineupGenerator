@@ -1,18 +1,14 @@
 // src/components/AuthForm.js
 import React, { useState } from "react";
 import AuthService from "../services/authService";
-
+import { toast } from "react-toastify";
 const AuthForm = () => {
   const [isLogin, setIsLogin] = useState(true); // Form türünü yönetir
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
-  const [successMessage, setSuccessMessage] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setErrorMessage("");
-    setSuccessMessage("");
 
     if (isLogin) {
       // Giriş Yapma İşlemi
@@ -23,28 +19,22 @@ const AuthForm = () => {
           window.location.reload(); // Sayfayı yenileyerek giriş durumunu güncelle
         }
       } catch (error) {
-        setErrorMessage(
-          error.response?.data?.message || "Giriş yapılırken hata oluştu"
-        );
+        toast.error(error.response?.data?.message || "Giriş yapılırken hata oluştu",{position: "right-bottom",autoClose: 600});
       }
     } else {
       // Kayıt Olma İşlemi
       try {
         const response = await AuthService.register(username, password);
-        setSuccessMessage("Kayıt başarılı! Giriş yapabilirsiniz.");
+        toast.success("Kayıt başarılı! Giriş yapabilirsiniz.",{position: "right-bottom",autoClose: 600});
         setIsLogin(true); // Kayıttan sonra giriş formuna geçiş yap
       } catch (error) {
-        setErrorMessage(
-          error.response?.data?.message || "Kayıt yapılırken hata oluştu"
-        );
+        toast.error(error.response?.data?.message || "Kayıt yapılırken hata oluştu",{position: "right-bottom",autoClose: 600});
       }
     }
   };
 
   const toggleForm = () => {
     setIsLogin(!isLogin);
-    setErrorMessage("");
-    setSuccessMessage("");
   };
 
   return (

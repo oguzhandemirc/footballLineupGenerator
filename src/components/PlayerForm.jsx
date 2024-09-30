@@ -1,38 +1,65 @@
-// src/components/PlayerForm.js
+// src/components/PlayerForm.jsx
 import React, { useState } from "react";
 import PlayerService from "../services/playerService";
+import { toast } from "react-toastify";
 
+const token = localStorage.getItem("token");
 const PlayerForm = ({ token, onPlayerAdded }) => {
   const [name, setName] = useState("");
   const [score, setScore] = useState(50);
   const [role, setRole] = useState("hucum");
   const [isGoalkeeper, setIsGoalkeeper] = useState(false);
-  const [error, setError] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (score < 0 || score > 100) {
-      setError("Puan 0 ile 100 arasında olmalıdır.");
+    const numericScore = Number(score);
+    if (numericScore < 0 || numericScore > 100) {
+      toast.error("Puan 0 ile 100 arasında olmalıdır.", {
+        position: "bottom-left",
+        autoClose: 500,
+      });
       return;
     }
-
+    const fetchPlayers = async () => {
+      try {
+        const response = await PlayerService.getPlayers(token);
+        setPlayers(response.data);
+      } catch (err) {
+        console.error("Oyuncular alınırken hata oluştu:", err);
+        toast.error("Oyuncular alınırken bir hata oluştu.", {
+          autoClose: 500,
+          position: "bottom-left",
+        });
+      }
+    };
     try {
-      const response = await PlayerService.addPlayer({ name, score, role, isGoalkeeper });
+      const response = await PlayerService.addPlayer({
+        name,
+        score: numericScore,
+        role,
+        isGoalkeeper,
+      });
       onPlayerAdded(response.data);
       setName("");
       setScore(50);
       setRole("hucum");
       setIsGoalkeeper(false);
-      setError("");
+      
+      toast.success("Oyuncu başarıyla eklendi!", {
+        position: "bottom-left",
+        autoClose: 500,
+      });
     } catch (error) {
-      setError("Oyuncu eklenirken bir hata oluştu.");
-      console.error("Oyuncu eklenirken hata oluştu:", error);
+      toast.error(
+        error.response?.data?.message || "Oyuncu eklenirken bir hata oluştu",
+        { position: "bottom-left", autoClose: 500 }
+      );
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 ">
+    <form onSubmit={handleSubmit} className="space-y-4">
       <div>
         <label className="block text-gray-700 text-sm font-bold mb-2">
           Oyuncu Adı
@@ -78,7 +105,7 @@ const PlayerForm = ({ token, onPlayerAdded }) => {
       </div>
 
       <div className="flex items-center">
-        <label className="block text-gray-700 text-sm font-bold mr-2">
+        {/* <label className="block text-gray-700 text-sm font-bold mr-2">
           Kaleci mi?
         </label>
         <input
@@ -86,12 +113,8 @@ const PlayerForm = ({ token, onPlayerAdded }) => {
           checked={isGoalkeeper}
           onChange={() => setIsGoalkeeper(!isGoalkeeper)}
           className="form-checkbox h-5 w-5 text-blue-600"
-        />
+        /> */}
       </div>
-
-      {error && (
-        <p className="text-red-500 text-sm">{error}</p>
-      )}
 
       <button
         type="submit"

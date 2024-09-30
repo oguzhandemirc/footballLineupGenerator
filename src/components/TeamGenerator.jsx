@@ -1,15 +1,15 @@
-// components/TeamGenerator.jsx
+// src/components/TeamGenerator.jsx
 import React, { useState, useEffect } from "react";
 import PlayerService from "../services/playerService";
 import TeamService from "../services/teamService";
 import FootballField from "./FootballField";
 import Modal from "./Modal";
+import { toast } from "react-toastify";
 
 const TeamGenerator = ({ token }) => {
   const [players, setPlayers] = useState([]);
   const [selectedPlayerIds, setSelectedPlayerIds] = useState([]);
   const [teams, setTeams] = useState(null);
-  const [error, setError] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isStatsModalOpen, setIsStatsModalOpen] = useState(false);
   const [showDiceAnimation, setShowDiceAnimation] = useState(false);
@@ -38,7 +38,10 @@ const TeamGenerator = ({ token }) => {
       setPlayers(response.data);
     } catch (err) {
       console.error("Oyuncular alınırken hata oluştu:", err);
-      setError("Oyuncular alınırken bir hata oluştu.");
+      toast.error("Oyuncular alınırken bir hata oluştu.", {
+        autoClose: 500,
+        position: "bottom-left",
+      });
     }
   };
 
@@ -52,7 +55,6 @@ const TeamGenerator = ({ token }) => {
 
   const openModal = () => {
     setIsModalOpen(true);
-    setError("");
   };
 
   const closeModal = () => {
@@ -74,7 +76,10 @@ const TeamGenerator = ({ token }) => {
 
   const generateTeams = async () => {
     if (selectedPlayerIds.length < 6) {
-      setError("Takım oluşturmak için en az 6 oyuncu seçmeniz gerekiyor.");
+      toast.error("Takım oluşturmak için en az 6 oyuncu seçmeniz gerekiyor.", {
+        autoClose: 500,
+        position: "bottom-left",
+      });
       return;
     }
 
@@ -84,7 +89,6 @@ const TeamGenerator = ({ token }) => {
         token
       );
       setTeams(response.data);
-      setError("");
 
       // İstatistikleri sessionStorage'a kaydet
       const {
@@ -116,9 +120,13 @@ const TeamGenerator = ({ token }) => {
         teamBavgHucum,
         teamBavgScore,
       });
+
     } catch (err) {
       console.error("Takımlar oluşturulurken hata oluştu:", err);
-      setError("Takımlar oluşturulurken bir hata oluştu.");
+      toast.error("Takımlar oluşturulurken bir hata oluştu.", {
+        autoClose: 500,
+        position: "bottom-left",
+      });
     }
   };
 
@@ -157,10 +165,13 @@ const TeamGenerator = ({ token }) => {
 
   const modalWithPlayers = () => {
     if (players.length === 0) {
-      setError("Oyuncu eklemelisiniz.");
+      toast.error("Oyuncu eklemelisiniz.", {
+        position: "bottom-left",
+        autoClose: 500,
+      });
       return;
     } else {
-      fetchPlayers();
+      fetchPlayers(); // Bu satırı kaldırdık çünkü oyuncular zaten yüklü
       openModal();
     }
   };
@@ -168,19 +179,26 @@ const TeamGenerator = ({ token }) => {
   const handleDeletePlayer = async (playerId) => {
     try {
       await PlayerService.deletePlayer(playerId, token);
-      x;
       fetchPlayers();
+      toast.success("Oyuncu başarıyla silindi.", {
+        autoClose: 500,
+        position: "bottom-left",
+      });
     } catch (err) {
       console.error("Oyuncu silinirken hata oluştu:", err);
-      setError("Oyuncu silinirken bir hata oluştu.");
+      toast.error("Oyuncu silinirken bir hata oluştu.", {
+        autoClose: 500,
+        position: "bottom-left",
+      });
     }
   };
+
   return (
     <div className="relative w-full h-screen">
       {/* Butonları sağ alt köşeye sabitliyoruz */}
       <div className="fixed bottom-4 right-4 z-20 flex flex-col space-y-2">
-        {error && <p className="text-red-500 mb-4">{error}</p>}
-
+        {/* {error && <p className="text-red-500 mb-4">{error}</p>} */}
+        
         {/* Takımları Oluştur Butonu */}
         <button
           onClick={modalWithPlayers}
@@ -213,7 +231,6 @@ const TeamGenerator = ({ token }) => {
         {/* İstatistikler Geniş Ekran */}
         <div className={`${!stats.teamAavgDefans ? "hidden" : ""}`}>
           <div className="gap-4 bg-orange-400 rounded-lg p-2 shadow-xl sm:flex hidden ">
-            {/* <div className="border-r-2 pr-2 "> */}
             <div className="border-r-2 pr-2 ">
               <p className="text-center ">
                 <strong className="border-b-2">Takım A</strong>
@@ -265,16 +282,19 @@ const TeamGenerator = ({ token }) => {
           </button>
         )}
       </div>
+      
       {/* Zar Atma Animasyonu */}
       {showDiceAnimation && (
         <div className="fixed inset-0 z-30 flex items-center justify-center bg-black bg-opacity-50">
           <div className="text-white text-6xl animate-spin">🎲</div>
         </div>
       )}
-      {/* /* Modal - Oyuncu Seçimi */}
+      
+      {/* Modal - Oyuncu Seçimi */}
       <Modal isOpen={isModalOpen} onClose={closeModal}>
         <h2 className="text-xl font-bold mb-4">Oyuncu Seçimi</h2>
-        {error && <p className="text-red-500 mb-4">{error}</p>}
+        <p className="pb-4">{selectedPlayerIds.length} Oyuncu Seçildi</p>
+        {/* {error && <p className="text-red-500 mb-4">{error}</p>} */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-96 overflow-y-auto">
           {players.map((player) => (
             <div
@@ -315,7 +335,8 @@ const TeamGenerator = ({ token }) => {
           </button>
         </div>
       </Modal>
-      {/* /* Modal - İstatistikler */}
+      
+      {/* Modal - İstatistikler */}
       <Modal isOpen={isStatsModalOpen} onClose={closeStatsModal}>
         <h2 className="text-xl font-bold mb-4">İstatistikler</h2>
         <div className="space-y-2">
@@ -341,6 +362,7 @@ const TeamGenerator = ({ token }) => {
           </button>
         </div>
       </Modal>
+      
       {/* Sahanın içine FootballField bileşenini gömüyoruz */}
       {teams && <FootballField teams={teams} />}
     </div>
