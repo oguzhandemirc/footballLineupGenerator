@@ -17,12 +17,12 @@ const LoginForm = ({ onLogin }) => {
       const response = await AuthService.login(username, password);
       if (response.token) {
         onLogin(response.token); // Token'ı üst bileşene ilet
-        toast.success("Başarıyla giriş yapıldı!", { position: "bottom-right", autoClose: 6000 });
+        toast.success("Başarıyla giriş yapıldı!", { position: "bottom-left", autoClose: 300 });
       }
     } catch (error) {
       toast.error(
         error.response?.data?.message || "Giriş yapılırken hata oluştu",
-        { position: "bottom-right", autoClose: 6000 }
+        { position: "bottom-left", autoClose: 500 }
       );
     }
   };
@@ -34,13 +34,13 @@ const LoginForm = ({ onLogin }) => {
       const response = await AuthService.register(username, password);
       setSwitchLogin(true);
       toast.success("Başarıyla kayıt oldunuz! Şimdi giriş yapabilirsiniz.", {
-        position: "bottom-right",
-        autoClose: 6000,
+        position: "bottom-left",
+        autoClose: 500,
       });
     } catch (error) {
       toast.error(
         error.response?.data?.message || "Kayıt yapılırken hata oluştu",
-        { position: "bottom-right", autoClose: 6000 }
+        { position: "bottom-left", autoClose: 500 }
       );
     }
   }
